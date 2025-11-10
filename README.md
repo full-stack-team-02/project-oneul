@@ -143,3 +143,6 @@ server
 
 - **2025.10.20** (by 이영섭)
 1. bestPost 관련 로직 수정 => best 글 하나만 가져오도록 controller 및 MainPage(client) 로직 수정
+
+- **2025.11.10** (by 이영섭)
+1. profileImg 경로 배포/로컬 환경에 따라 동적으로 변경되도록 설정

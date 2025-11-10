@@ -305,6 +305,9 @@ const authLocation = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     const email = req.params.email;
+    const baseUrl = process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_API_URL
+    : "http://localhost:8000";
 
     try {
         const user = await User.findOne({ email }).exec();
@@ -313,7 +316,7 @@ const getUserProfile = async (req, res) => {
         }
 
         res.json({
-            profileImg: `http://localhost:8000/${user.profileImg}`,
+            profileImg: `${baseUrl}/${user.profileImg}`,
         });
     } catch (error) {
         res.status(500).json({ message: "Server error" });
