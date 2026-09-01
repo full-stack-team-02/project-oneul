@@ -17,7 +17,7 @@ const OurToday = () => {
     });
 
     if (isLoading) return <div>로딩중...</div>;
-
+    console.log("posts 데이터:", posts);
     return (
         <>
             <TabMenu />
