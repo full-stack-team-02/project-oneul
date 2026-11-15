@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PostHeader from "./PostHeader";
 import { PostContent } from "./PostContent";
 import PostAction from "./PostAction";
-import { API_URL } from "../../../../shared/api/apiSlice";
+import { IMAGE_URL } from "../../../../shared/api/apiSlice";
 import { useSelector } from "react-redux";
 
 const reactionTypes = ["heart", "like", "smile", "sad", "angry"];
@@ -12,7 +12,7 @@ const PostCard = ({ post, keyword }) => {
     const currentUser = useSelector((state) => state.login.currentUser);
     const currentUserEmail = currentUser?.email;
     const profileImg = useMemo(
-        () => `${API_URL}/${post.userProfileImg}`,
+        () => `${IMAGE_URL}/${post.userProfileImg}`,
         [post.userProfileImg],
     );
 

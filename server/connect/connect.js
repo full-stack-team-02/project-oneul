@@ -11,7 +11,6 @@ const connect = () => {
     if (process.env.NODE_ENV !== "production") {
         mongoose.set("debug", true);
     }
-    console.log(connect_url);
     mongoose
         .connect(connect_url, { dbName: "oneul" })
         .then(() => {

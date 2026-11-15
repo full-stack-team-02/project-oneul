@@ -3,10 +3,12 @@ import session from "express-session"
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 
-const SECRET_KEY = process.env.SECRET_KEY;
+// auth.js와 같은 키를 써야 발급한 토큰이 검증된다 (배포에서는 app.js가 SECRET_KEY 필수 검사)
+const SECRET_KEY = process.env.SECRET_KEY || "mySecretKey";
 
 const loginUser = async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
@@ -114,14 +116,28 @@ const checkNickname = async (req, res) => {
 };
 
 // 이미지 업로드 라우트
-const uploadProfileImg = (req, res) => {
+const uploadProfileImg = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({
             message: "파일 업로드에 실패했습니다",
         });
     }
-    const profileImgPath = `images/profile/${req.file.filename}`;
-    return res.status(200).json({ profileImg: profileImgPath });
+    // 개발: multer가 디스크에 저장한 파일명 사용
+    if (!req.file.buffer) {
+        return res.status(200).json({ profileImg: `images/profile/${req.file.filename}` });
+    }
+    // 배포: public_id를 "images/profile/<이름>"으로 올려 DB 값과 Cloudinary 경로를 일치시킨다
+    try {
+        const name = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+        const result = await cloudinary.uploader.upload(
+            `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+            { public_id: `images/profile/${name}` },
+        );
+        return res.status(200).json({ profileImg: `images/profile/${name}.${result.format}` });
+    } catch (error) {
+        console.error("Cloudinary upload failed:", error);
+        return res.status(500).json({ message: "파일 업로드에 실패했습니다" });
+    }
 };
 
 const signupUser = async (req, res) => {
@@ -305,9 +321,12 @@ const authLocation = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
     const email = req.params.email;
-    const baseUrl = process.env.NODE_ENV === "production"
-    ? process.env.REACT_APP_API_URL
-    : "http://localhost:8000";
+    // Cloudinary 사용 시 이미지 주소를 직접 반환, 아니면(개발) 이 서버의 images 폴더 주소
+    const baseUrl = process.env.CLOUDINARY_URL
+        ? `https://res.cloudinary.com/${cloudinary.config().cloud_name}/image/upload`
+        : process.env.NODE_ENV === "production"
+          ? process.env.REACT_APP_API_URL
+          : "http://localhost:8000";
 
     try {
         const user = await User.findOne({ email }).exec();

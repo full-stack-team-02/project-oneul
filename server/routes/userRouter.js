@@ -19,7 +19,8 @@ import multer from "multer";
 import path from "path";
 
 // Multer 설정
-const storage = multer.diskStorage({
+// 배포(CLOUDINARY_URL 있음): 메모리에 받아 컨트롤러에서 Cloudinary로 업로드 / 개발: images/profile에 저장
+const storage = process.env.CLOUDINARY_URL ? multer.memoryStorage() : multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "images/profile");
     },
@@ -30,7 +31,8 @@ const storage = multer.diskStorage({
     },
 });
 
-const upload = multer({ storage });
+// 메모리 저장 시 큰 파일로 서버 메모리가 터지지 않도록 크기 제한
+const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 
 const userRouter = express.Router();
 

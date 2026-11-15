@@ -6,7 +6,7 @@ import { faPenToSquare, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { useDispatch } from "react-redux";
 import { openModal } from "../../modal/model/modalSlice";
 import CommentEdit from "./CommentEdit";
-import { API_URL } from "../../../shared/api/apiSlice";
+import { IMAGE_URL } from "../../../shared/api/apiSlice";
 import { useUpdateCommentMutation } from "../api/commentApi";
 import { formatTimeAgo } from "../../../shared/util/formatTimeAgo";
 
@@ -50,7 +50,7 @@ const CommentItem = ({ c }) => {
 
     return (
         <CommentRow>
-            <Avatar src={`${API_URL}/${c.profileImg}`} />
+            <Avatar src={`${IMAGE_URL}/${c.profileImg}`} />
             <CommentBody>
                 <CommentMeta>
                     <AuthorWrap>
