@@ -1,5 +1,7 @@
-import dotenv from "dotenv";
+// 다른 모듈보다 먼저 .env를 읽어야 import 시점에 환경변수를 쓸 수 있다
+import "dotenv/config";
 import express from "express";
+import { v2 as cloudinary } from "cloudinary";
 import session from 'express-session'
 import connect from "./connect/connect.js";
 import bodyParser from "body-parser";
@@ -11,8 +13,12 @@ import morgan from 'morgan';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-// .env 파일에서 환경변수 불러오기
-dotenv.config();
+// 배포 환경에서 필수 환경변수가 없으면 시작하지 않는다 (없으면 로그인 시 서버 다운, DB 미연결)
+if (process.env.NODE_ENV === "production") {
+    const missing = ["MONGO_URI", "SECRET_KEY", "CLOUDINARY_URL"].filter((k) => !process.env[k]);
+    if (missing.length) throw new Error(`필수 환경변수 누락: ${missing.join(", ")}`);
+}
+
 const { PORT } = process.env;
 const SECRET_KEY = process.env.SECRET_KEY || "mySecretKey";
 
@@ -21,6 +27,8 @@ connect();
 
 const app = express();
 const port = PORT || 8000;
+// Render 프록시 뒤에서 https를 인식해야 secure 쿠키가 발급된다
+app.set("trust proxy", 1);
 
 // bodyparser
 app.use(bodyParser.json());
@@ -73,7 +81,17 @@ app.use(passport.initialize());
 initializePassport();
 
 // 정적 파일 제공
-app.use("/images", express.static("images"));
+// CLOUDINARY_URL이 있으면(배포) 같은 경로의 Cloudinary 이미지로 보내고, 없으면(개발) 로컬 images 폴더에서 제공
+// DB에는 두 환경 모두 "images/profile/<파일명>" 형태로 저장된다
+if (process.env.CLOUDINARY_URL) {
+    app.use("/images", (req, res) => {
+        res.redirect(
+            `https://res.cloudinary.com/${cloudinary.config().cloud_name}/image/upload/images${req.path}`,
+        );
+    });
+} else {
+    app.use("/images", express.static("images"));
+}
 
 
 const jwtOptions = {
@@ -128,9 +146,8 @@ app.use("/", rootRouter);
 const startServer = () => {
     try {
       initializePassport();
-      const PORT = 8000;
-      app.listen(PORT, () => {
-        console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);
+      app.listen(port, () => {
+        console.log(`서버가 포트 ${port}에서 실행 중입니다.`);
       });
     } catch (err) {
       console.error('서버 실행 중 오류 발생:', err);

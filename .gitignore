@@ -24,3 +24,6 @@ server/node_modules
 # .env in server folder
 server/.env
 .env
+!.env.example
+.env.*
+!.env.example

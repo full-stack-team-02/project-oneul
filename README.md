@@ -23,7 +23,7 @@
 
 #### 또한, 다른 사용자들과 소통함으로써 서로에게 서로의 하루를 나누고, 공감하고, 위로받는 경험을 제공합니다.
 
-- **배포 사이트**: [여기를 클릭하여 페이지를 방문해주세요](https://web-oneul-client-mgurfw3q791cc2d7.sel3.cloudtype.app)
+- **배포 사이트**: [여기를 클릭하여 페이지를 방문해주세요](https://project-oneul.vercel.app/logIn)
 
 [맨 위로](#-목차)
 
@@ -178,3 +178,12 @@ server
 - **2026.09.01** (by 이영섭)
 
 1. profileImg upload시 이름 변경
+
+
+- **2026.11.15** (by 이영섭)
+
+1. CI/CD를 위한 배포 플랫폼 변경(client-vercel, server-render)
+2. 배포시 발생되는 문제점 해결
+- 불필요한 변수 삭제(미사용 hook 함수로 인한 에러)
+- myPage 내 img 태그의 alt 속성 추가
+- 개발 환경에서만 존재하던 profileImg를 클라우디너리로 옮김으로써 외부에서도 profileImg를 변경할 수 있도록 수정

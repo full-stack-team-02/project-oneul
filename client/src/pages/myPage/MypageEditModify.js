@@ -99,7 +99,7 @@ const MypageEditModify = () => {
 
             try {
                 const response = await fetch(
-                    "http://localhost:8000/user/uploadProfileImg",
+                    `${API_URL}/user/uploadProfileImg`,
                     {
                         method: "POST",
                         body: formData,
@@ -132,7 +132,7 @@ const MypageEditModify = () => {
         formData.append("profileImg", blob, "profileImg.png");
 
         const response = await fetch(
-            "http://localhost:8000/user/uploadProfileImg",
+            `${API_URL}/user/uploadProfileImg`,
             {
                 method: "POST",
                 body: formData,
@@ -211,7 +211,7 @@ const MypageEditModify = () => {
     const checkMobileDuplicate = async (mobile) => {
         try {
             const response = await fetch(
-                "http://localhost:8000/user/checkMobile",
+                `${API_URL}/user/checkMobile`,
                 {
                     method: "POST",
                     headers: {
@@ -257,7 +257,7 @@ const MypageEditModify = () => {
     const checkNicknameDuplicate = async (nickname) => {
         try {
             const response = await fetch(
-                "http://localhost:8000/user/checkNickname",
+                `${API_URL}/user/checkNickname`,
                 {
                     method: "POST",
                     headers: {
@@ -310,7 +310,7 @@ const MypageEditModify = () => {
             try {
                 console.log(data);
                 const response = await fetch(
-                    "http://localhost:8000/user/update",
+                    `${API_URL}/user/update`,
                     {
                         method: "PUT",
                         headers: {

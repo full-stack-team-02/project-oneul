@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Avatar from "../../../shared/ui/Avatar";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { API_URL } from "../../../shared/api/apiSlice";
+import { IMAGE_URL } from "../../../shared/api/apiSlice";
 import { useCreateCommentMutation } from "../api/commentApi";
 
 const CommentInput = () => {
@@ -13,7 +13,7 @@ const CommentInput = () => {
     const { postId } = useSelector((s) => s.commentUI);
     const currentUser = useSelector((state) => state.login.currentUser);
     const profileImgSrc = currentUser
-        ? `${API_URL}/${currentUser.profileImg}`
+        ? `${IMAGE_URL}/${currentUser.profileImg}`
         : "";
 
     const handleSend = async () => {
